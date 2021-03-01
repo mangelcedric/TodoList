@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>{% block title %}{% endblock %}</title>
-    <!-- Latest compiled and minified CSS -->
+    <title>{% block title %}TodoApp{% endblock %}</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/todo.css') }}">
     {% block stylesheets %}{% endblock %}
@@ -14,12 +13,13 @@
 <body>
     <header class="container">
         <h1>TodoApp</h1>
+        {% set routeName = app.request.attributes.get('_route') %}
         <nav>
             <ul class="nav nav-tabs">
-                <li class="active">
+                <li{% if routeName == 'homepage' %} class="active"{% endif %}>
                     <a href="{{ path('homepage') }}">A propos</a>
                 </li>
-                <li>
+                <li{% if routeName != 'homepage' %} class="active"{% endif %}>
                     <a href="{{ path('todo_list') }}">Todos</a>
                 </li>
             </ul>

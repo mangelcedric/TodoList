@@ -37,7 +37,14 @@ class TodoModel
             self::$session = new Session();
         }
         // Des données existent-elles
-        if (self::$session->get('todos', false) == false) {
+        // le getter de la session avec le second argument retourne la valeur false
+        // seulement si l'entree todos dans la session n'existe pas 
+        // si cette entree existe mais qu'il s'agit d'une liste de taches vide
+        // (donc tableau vide), en utilisant un == on obtient un true => [] == false
+        // si on utilise === on obtient un false => [] === false
+        // Ca veut dire qu'avec == quand la liste est vide, on la réinitialise
+        // avec un === on y touche pas et on la laisse vide
+        if (self::$session->get('todos', false) === false) {
             // Si vide, on initialise
             self::$session->set('todos', self::$initTodos);
         }
@@ -55,7 +62,7 @@ class TodoModel
         return self::$session->get('todos');
     }
 
-    public function find($id)
+    public static function find($id)
     {
         // On récupère les tâches
         $tasks = self::getTodos();
@@ -67,7 +74,7 @@ class TodoModel
         return false;
     }
 
-    public function setStatus($id, $status)
+    public static function setStatus($id, $status)
     {
         // On récupère les tâches
         $tasks = self::getTodos();
@@ -86,7 +93,7 @@ class TodoModel
     /**
      * Retourne true (si delete ok) ou false (si tâche non trouvée)
      */
-    public function delete($id)
+    public static function delete($id)
     {
         // On récupère les tâches
         $tasks = self::getTodos();
@@ -107,7 +114,7 @@ class TodoModel
         return self::getTodos();
     }
 
-    public function add($title)
+    public static function add($title)
     {
         // Date courante
         $date = new \DateTime();
@@ -127,5 +134,16 @@ class TodoModel
 
         // On écrase les todos
         self::setTodos($todos);
+    }
+
+    public static function reset()
+    {
+        // On utilise la fonction checkSession qui vérifie qu'un objet Session
+        // se trouve dans la propriété $session de la classe
+        // De plus, elle vérifie que l'entrée «todos» existe
+        // Si ce n'est pas le cas, elle initialise la liste des tâches
+        self::checkSession();
+        // on ecrase la liste des taches quelqu'elles soient pour la réinitialiser 
+        self::$session->set('todos', self::$initTodos);
     }
 }

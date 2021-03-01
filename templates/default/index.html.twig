@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}{{ parent() }} - A propos{% endblock %}
+
 {% block body %}
 
 <div class="row">
@@ -8,14 +10,9 @@
 		<p>Bienvenue sur TodoApp, votre nouveau gestionnaire de tâches !</p>
 		<p>Vous pouvez <a href="{{ path('todo_list') }}">afficher la liste des tâches</a> ou ajouter tout de suite une nouvelle tâche :</p>
 
-		<h3>Nouvelle tâche</h3>
+		
 
-		<form action="{{ path('todo_add') }}" method="post" class="form-inline">
-			<div class="form-group">
-				<input type="text" name="task" placeholder="Intitulé de la tâche" class="form-control">
-				<input type="submit" name="add" value="Ajouter" class="form-control btn btn-primary">
-			</div>
-		</form>
+		{% include 'todo/_form_add.html.twig' %}
 
 	</div>
 </div>

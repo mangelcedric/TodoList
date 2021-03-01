@@ -1,8 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des tâches{% endblock %}
+{% block title %}{{ parent() }} - Liste des tâches{% endblock %}
 
 {% block body %}
+
+{# On affiche les messages flash #}
+{% for typeDeMessageFlash, messages in app.flashes %}
+    {# messages est un tableau avec tous les messages dedans #}
+    {% for message in messages %}
+        <div class="alert alert-{{ typeDeMessageFlash }} alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
 
 <h2>Liste des tâches</h2>
 
@@ -12,20 +23,21 @@
 
     <li class="list-group-item">
 
-        <!-- TODO: delete-->
-        <form action="" method="post">
+        <form action="{{ path('todo_delete', {id: key}) }}" method="post" class="delete">
             <button class="btn btn-xs btn-link" type="submit" name="delete"><span class="glyphicon glyphicon-remove"></span></button>
         </form>
 
         <span>
             {% if todo.status == 'done' %}
             <!-- tâche effectuée -->
-            <a href="{{ path('todo_set_status', { 'id' : key, 'status' : 'undone' } ) }}"><span
-                    class="glyphicon glyphicon-check"></span></a>
+            <form action="{{ path('todo_set_status', { 'id' : key, 'status' : 'undone' } ) }}" method="post" class="status">
+                <button class="btn btn-xs btn-link" type="submit"><span class="glyphicon glyphicon-check"></span></button>
+            </form>
             {% else %}
             <!-- tâche non effectuée -->
-            <a href="{{ path('todo_set_status', { 'id' : key, 'status' : 'done' } ) }}"><span
-                    class="glyphicon glyphicon-unchecked"></span></a>
+            <form action="{{ path('todo_set_status', { 'id' : key, 'status' : 'done' } ) }}" method="post" class="status">
+                <button class="btn btn-xs btn-link" type="submit"><span class="glyphicon glyphicon-unchecked"></span></button>
+            </form>
             {% endif %}
 
             <!-- lien vers tâche -->
@@ -43,15 +55,18 @@
     {% endfor %}
 </ul>
 
-<h3>Nouvelle tâche</h3>
-
-<form action="{{ path('todo_add') }}" method="post" class="form-inline">
-    <div class="form-group">
-        <input type="text" name="task" placeholder="Intitulé de la tâche" class="form-control">
-        <input type="submit" name="add" value="Ajouter" class="form-control btn btn-primary">
-    </div>
-</form>
+{% include 'todo/_form_add.html.twig' %}
 
 <hr>
 
+{# on affiche iun lien de réinitilisation que si on est en environnement de dev#}
+{% if app.environment == 'dev' %}
+    <a href="{{ path('todo_reset') }}" class="text-danger">Réinitialiser la liste des tâches (dev)</a>
+{% endif %}
+
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 {% endblock %}
