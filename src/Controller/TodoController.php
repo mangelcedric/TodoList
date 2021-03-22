@@ -34,10 +34,6 @@ class TodoController extends AbstractController
     public function show(int $id)
     {
         $todo = TodoModel::find($id);
-
-        // $todo est soit un tableau soit la valeur false
-        // si $todo == false ça veut dire que la tache n'existe pas 
-        // on genere donc une 404
         if($todo == false) {
             throw $this->createNotFoundException();
         }
@@ -48,8 +44,6 @@ class TodoController extends AbstractController
     }
 
     /**
-     * Changement de statut
-     *
      * @Route("/{id}/{status}",
      *          name="set_status",
      *          requirements={"id": "\d+", "status": "(done|undone)" },
@@ -59,11 +53,7 @@ class TodoController extends AbstractController
      */
     public function setStatus($id, $status)
     {
-        // on recupere la valeur de retour de setStatus
         $result = TodoModel::setStatus($id, $status);
-
-        // si $result vaut true on ajoute un msg flash de succes 
-        // sinon un msg flash d'erreur
         if ($result) {
             $this->addFlash('success', 'La tâche à été marquée comme ' . $status);
         } else {
@@ -74,21 +64,14 @@ class TodoController extends AbstractController
     }
 
     /**
-     * Ajout d'une tâche
-     *
      * @Route("/add", name="add", methods={"POST"})
      *
      * La route est définie en POST parce qu'on veut ajouter une ressource sur le serveur
      */
     public function add(Request $request)
     {   
-        // $request contient toutes les informations de la requête
-        // $request->request contient toutes les données en POST
         $task = $request->request->get('task');
-        // Pour ajouter une tâche, on utilise la méthode add de TodoModel
         TodoModel::add($task);
-
-        // une fois la tache ajoutée un ajoute un msg flash
         $this->addFlash('success', 'La tâche ' . $task . ' a bien été ajoutée');
  
         return $this->redirectToRoute('todo_list');
@@ -100,7 +83,6 @@ class TodoController extends AbstractController
      */
     public function delete(int $id)
     {
-        // on supprime la tache de la session
         $result = TodoModel::delete($id);
 
         if ($result) {
@@ -108,7 +90,7 @@ class TodoController extends AbstractController
         } else {
             $this->addFlash('danger', 'Vous essayez de supprmier une tâche qui n\'existe pas!');
         }
-        // on redirige l'utilisateur en GET sur la page des taches
+
         return $this->redirectToRoute('todo_list');
     }
 
@@ -117,15 +99,10 @@ class TodoController extends AbstractController
      */
     public function reset(Request $request)
     {
-        // On pourrait autoriser la réinitialisation de la liste des tâches que si on est en dev
-        // On récupère l'environnement dans $request
         $env = $request->server->get('APP_ENV');
-        // Si on est en dev, on fait le reset
         if ($env == 'dev') {
-            // On réinitialise la liste des tâches
             TodoModel::reset();
         }
-        // Autorisé ou non, on redirige vers la page de la liste
         return $this->redirectToRoute('todo_list');
     }
 }

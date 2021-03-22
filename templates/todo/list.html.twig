@@ -3,10 +3,8 @@
 {% block title %}{{ parent() }} - Liste des tâches{% endblock %}
 
 {% block body %}
-
-{# On affiche les messages flash #}
+}
 {% for typeDeMessageFlash, messages in app.flashes %}
-    {# messages est un tableau avec tous les messages dedans #}
     {% for message in messages %}
         <div class="alert alert-{{ typeDeMessageFlash }} alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -40,13 +38,10 @@
             </form>
             {% endif %}
 
-            <!-- lien vers tâche -->
             <a href="{{ path('todo_show', { 'id' : key }) }}">
                 {% if todo.status == 'done' %}
-                <!-- tâche effectuée -->
                 <s>{{ todo.task }}</s>
                 {% else %}
-                <!-- tâche non effectuée -->
                 {{ todo.task }}
                 {% endif %}
             </a>
@@ -59,7 +54,6 @@
 
 <hr>
 
-{# on affiche iun lien de réinitilisation que si on est en environnement de dev#}
 {% if app.environment == 'dev' %}
     <a href="{{ path('todo_reset') }}" class="text-danger">Réinitialiser la liste des tâches (dev)</a>
 {% endif %}
